@@ -1,0 +1,75 @@
+apply plugin: "idea"
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'maven'
+
+version = "0.11.0"
+group = "com.silvertern.gradle"
+
+jar.manifest.attributes (
+	"Implementation-Version": version,
+  "Implementation-Title": "Equinox Platform and Build Plugin",
+)
+
+gradlePlugin {
+	plugins {
+		noxplatform {
+			id = "nox.Platform"
+			implementationClass = "nox.Platform"
+		}
+		noxbuild {
+			id = "nox.Java"
+			implementationClass = "nox.Java"
+		}
+		noxosgi {
+			id = "nox.OSGi"
+			implementationClass = "nox.OSGi"
+		}
+		aspectj {
+			id = "nox.AspectJ"
+			implementationClass = "nox.AspectJ"
+		}
+	}
+}
+
+repositories {
+	mavenLocal()
+	jcenter()
+}
+
+dependencies {
+	compile "biz.aQute.bnd:biz.aQute.bndlib:3.2.0"
+
+	compile "com.google.guava:guava:21.0"
+	compile "org.apache.commons:commons-lang3:3.5"
+	compile "commons-io:commons-io:2.5"
+	compile "com.fasterxml.jackson.core:jackson-databind:2.7.3"
+	compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.7.3"
+	runtime "org.codehaus.woodstox:woodstox-core-asl:4.4.1"
+
+	compile "org.slf4j:slf4j-api:1.7.10"
+
+	testCompile "junit:junit:4.12"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+javadoc {
+	failOnError false
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	classifier = 'javadoc'
+	from javadoc.destinationDir
+}
+
+artifacts {
+	archives sourcesJar
+	archives javadocJar
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = "3.2.1"
+}
