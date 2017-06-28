@@ -1,4 +1,3 @@
-plugins.apply(nox.Java)
 plugins.apply(nox.OSGi)
 
 group = "com.silvertern"

@@ -4,16 +4,12 @@ buildscript {
 	dependencies.add("classpath", "com.silvertern.gradle:nox:+")
 }
 
-ext {
-	targetPlatformRoot = file("platform")
-}
-
 plugins.apply(nox.Platform)
 
-platform {
-	mapping("foo", "boo")
+allprojects { p ->
+	p.repositories.add(platformRepo("e46", "./platform"))
 }
 
-platform {
-	assert map("foo") == "boo"
+bundleMappings {
+
 }

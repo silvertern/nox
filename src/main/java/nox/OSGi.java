@@ -3,24 +3,6 @@
  */
 package nox;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
-import nox.compile.BuildProperties;
-import nox.compile.osgi.OSGiJarManifest;
-import nox.core.manifest.Classpath;
-import org.gradle.api.GradleException;
-import org.gradle.api.Plugin;
-import org.gradle.api.Project;
-import org.gradle.api.Task;
-import org.gradle.api.internal.project.ProjectInternal;
-import org.gradle.api.internal.tasks.TaskContainerInternal;
-import org.gradle.api.plugins.JavaBasePlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
-import org.gradle.api.tasks.Copy;
-import org.gradle.jvm.tasks.Jar;
-import org.gradle.language.jvm.tasks.ProcessResources;
-
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -31,6 +13,26 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Set;
+import javax.inject.Inject;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Maps;
+
+import org.gradle.api.GradleException;
+import org.gradle.api.Plugin;
+import org.gradle.api.Project;
+import org.gradle.api.Task;
+import org.gradle.api.internal.project.ProjectInternal;
+import org.gradle.api.internal.tasks.TaskContainerInternal;
+import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.tasks.Copy;
+import org.gradle.jvm.tasks.Jar;
+import org.gradle.language.jvm.tasks.ProcessResources;
+
+import nox.compile.BuildProperties;
+import nox.compile.osgi.OSGiJarManifest;
+import nox.core.manifest.Classpath;
 
 
 public class OSGi implements Plugin<Project> {
@@ -65,7 +67,7 @@ public class OSGi implements Plugin<Project> {
 	public void apply(Project target) {
 		ProjectInternal project = (ProjectInternal) target;
 
-		project.getPluginManager().apply(JavaBasePlugin.class);
+		project.getPluginManager().apply(JavaPlugin.class);
 
 		TaskContainerInternal tasks = project.getTasks();
 		ProcessResources procRes = (ProcessResources) tasks.getByName("processResources");

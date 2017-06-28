@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Xnife Application Framework
+Bundle-SymbolicName: com.xnife.application
+Bundle-Version: 0.0.0
+Bundle-Vendor: Xnife Framework
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: com.xnife.application

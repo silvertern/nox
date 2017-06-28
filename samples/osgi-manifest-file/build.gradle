@@ -1,6 +1,9 @@
 import java.nio.file.Paths
 
-plugins.apply(JavaPlugin)
+ext {
+	unpackOSGiManifest = false
+}
+
 plugins.apply(nox.OSGi)
 
 group = "com.silvertern"
@@ -8,9 +11,6 @@ version = "1.2.3"
 
 repositories.jcenter()
 
-ext {
-	unpackOSGiManifest = false
-}
 
 jar.manifest {
 	from = Paths.get(projectDir.getAbsolutePath(), "META-INF", "MANIFEST.MF").toFile()
@@ -19,4 +19,5 @@ jar.manifest {
 
 dependencies {
 	compile("com.google.guava:guava:21.0")
+	compile("platform:somejar:0.11.0")
 }

@@ -16,10 +16,6 @@ gradlePlugin {
 			id = "nox.Platform"
 			implementationClass = "nox.Platform"
 		}
-		noxbuild {
-			id = "nox.Java"
-			implementationClass = "nox.Java"
-		}
 		noxosgi {
 			id = "nox.OSGi"
 			implementationClass = "nox.OSGi"
