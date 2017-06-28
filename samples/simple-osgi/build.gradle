@@ -1,0 +1,47 @@
+buildscript {
+	repositories { mavenLocal() }
+	repositories { jcenter() }
+	dependencies { classpath "com.silvertern.gradle:nox:+" }
+}
+
+apply {
+	plugin(JavaPlugin)
+	plugin(nox.OSGi)
+}
+
+group = "com.silvertern"
+version = "1.2.3"
+
+repositories {
+	jcenter()
+}
+
+jar {
+	manifest {
+		spec "some.name", project.version
+		assert spec.symbolicName == "some.name"
+
+		spec toSymbolicName(project.group, project.name), project.version
+		assert spec.symbolicName == "com.silvertern.simple.osgi"
+		assert spec.version.toString() == "1.2.3"
+
+		spec project
+		assert spec.symbolicName == "com.silvertern.simple.osgi"
+		assert spec.version.toString() == "1.2.3"
+
+		spec toSymbolicName(project.group, project.name), project.version, {
+			singleton = true
+		}
+		assert spec.singleton
+
+		spec project, {
+			uses = false
+		}
+		assert !spec.uses
+
+	}
+}
+
+dependencies {
+	compile("com.google.guava:guava:21.0")
+}
