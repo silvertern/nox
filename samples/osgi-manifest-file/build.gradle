@@ -1,28 +1,20 @@
 import java.nio.file.Paths
 
-buildscript {
-	repositories { mavenLocal() }
-	repositories { jcenter() }
-	dependencies { classpath "com.silvertern.gradle:nox:+" }
-}
-
-apply {
-	plugin(JavaPlugin)
-	plugin(nox.OSGi)
-}
+plugins.apply(JavaPlugin)
+plugins.apply(nox.OSGi)
 
 group = "com.silvertern"
 version = "1.2.3"
 
-repositories {
-	jcenter()
+repositories.jcenter()
+
+ext {
+	unpackOSGiManifest = false
 }
 
-jar {
-	manifest {
-		from = Paths.get(projectDir.getAbsolutePath(), "META-INF", "MANIFEST.MF").toFile()
-		assert from.getAbsolutePath().endsWith("samples/osgi-manifest-file/META-INF/MANIFEST.MF")
-	}
+jar.manifest {
+	from = Paths.get(projectDir.getAbsolutePath(), "META-INF", "MANIFEST.MF").toFile()
+	assert from.getAbsolutePath().endsWith("samples/osgi-manifest-file/META-INF/MANIFEST.MF")
 }
 
 dependencies {

@@ -1,2 +1,3 @@
 include "simple-osgi"
 include "osgi-manifest-file"
+include "platform-mapping"

@@ -1,0 +1,19 @@
+buildscript {
+	repositories.mavenLocal()
+	repositories.jcenter()
+	dependencies.add("classpath", "com.silvertern.gradle:nox:+")
+}
+
+ext {
+	targetPlatformRoot = file("platform")
+}
+
+plugins.apply(nox.Platform)
+
+platform {
+	mapping("foo", "boo")
+}
+
+platform {
+	assert map("foo") == "boo"
+}

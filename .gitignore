@@ -8,3 +8,5 @@
 build/
 out/
 *.iml
+build.properties
+MANIFEST.MF
