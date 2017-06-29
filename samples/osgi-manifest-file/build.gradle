@@ -19,5 +19,5 @@ jar.manifest {
 
 dependencies {
 	compile("com.google.guava:guava:21.0")
-	compile("platform:somejar:0.11.0")
+	compile("plugins:somejar:0.11.0")
 }

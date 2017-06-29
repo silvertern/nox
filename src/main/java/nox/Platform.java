@@ -18,9 +18,9 @@ import nox.platform.PlatformRepoMethod;
 
 public class Platform implements Plugin<Project> {
 
-	public static final String GROUP = "platform";
-
 	public static final String PLUGINS = "plugins";
+
+	public static final String GROUP = "platform";
 
 	public static final String IVY_METADATA = "ivy-metadata";
 
