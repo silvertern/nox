@@ -1,7 +1,7 @@
 /**
  * Copyright (c) Profidata AG 2017
  */
-package nox.platform;
+package nox.core;
 
 import com.google.common.collect.Maps;
 

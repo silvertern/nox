@@ -1,7 +1,7 @@
 /*
  * Copyright (c) Oleg Sklyar 2017. License: MIT 
  */
-package nox.compile;
+package nox.compilation;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -9,7 +9,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import groovy.lang.Closure;
 import nox.Platform;
-import nox.platform.PlatformInfoHolder;
+import nox.core.PlatformInfoHolder;
 import org.gradle.api.artifacts.ClientModule;
 import org.gradle.api.artifacts.repositories.ArtifactRepository;
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository;

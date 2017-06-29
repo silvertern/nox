@@ -1,9 +1,10 @@
 /*
  * Copyright (c) Oleg Sklyar 2017. License: MIT
  */
-package nox.compile;
+package nox.compilation;
 
 import com.google.common.collect.Maps;
+import nox.manifest.OsgiManifest;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -42,7 +43,7 @@ public class ManifestUnpackingAction {
 		Jar jarTask = (Jar) tasks.getByName("jar");
 
 		// extension value has precedency over ext; default=unpack
-		if (((OSGiJarManifest) jarTask.getManifest()).from != null) {
+		if (((OsgiManifest) jarTask.getManifest()).from != null) {
 			return;
 		} else if (platform.unpackOSGiManifest != null) {
 			if (!platform.unpackOSGiManifest.booleanValue()) {

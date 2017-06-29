@@ -1,7 +1,7 @@
 /*
  * Copyright (c) Oleg Sklyar 2017. License: MIT
  */
-package nox.compile;
+package nox.compilation;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;

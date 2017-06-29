@@ -1,7 +1,7 @@
 /**
  * Copyright (c): 2017 Oleg Sklyar and contributors. License: MIT
  */
-package nox.core.sys;
+package nox.sys;
 
 public enum Arch {
 	x86_64("x86_64"),

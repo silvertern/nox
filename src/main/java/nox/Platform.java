@@ -3,11 +3,11 @@
  */
 package nox;
 
-import nox.core.sys.Arch;
-import nox.core.sys.OS;
-import nox.core.sys.Win;
-import nox.compile.OSGiExt;
-import nox.platform.PlatformInfoHolder;
+import nox.sys.Arch;
+import nox.sys.OS;
+import nox.sys.Win;
+import nox.compilation.OSGiExt;
+import nox.core.PlatformInfoHolder;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.internal.plugins.ExtensionContainerInternal;

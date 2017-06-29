@@ -3,7 +3,7 @@
  */
 package nox;
 
-import nox.compile.AjcTask;
+import nox.compilation.AjcTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;

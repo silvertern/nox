@@ -1,7 +1,7 @@
 /**
  * Copyright (c) Profidata AG 2017
  */
-package nox.compile;
+package nox.compilation;
 
 import com.google.common.collect.Maps;
 import org.gradle.api.AntBuilder;
