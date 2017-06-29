@@ -5,6 +5,11 @@ version = "1.2.3"
 
 repositories.jcenter()
 
+osgi.buildProperties {
+	sources("a", "b", "c")
+}
+
+
 jar.manifest {
 	spec "some.name", project.version
 	assert spec.symbolicName == "some.name"

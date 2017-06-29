@@ -1,7 +1,7 @@
 /*
  * Copyright (c) Oleg Sklyar 2017. License: MIT 
  */
-package nox.compile.osgi;
+package nox.compile;
 
 import aQute.bnd.osgi.Analyzer;
 import com.google.common.collect.Multimap;

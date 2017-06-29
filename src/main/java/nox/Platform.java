@@ -6,7 +6,7 @@ package nox;
 import nox.core.sys.Arch;
 import nox.core.sys.OS;
 import nox.core.sys.Win;
-import nox.platform.PlatformExt;
+import nox.compile.OSGiExt;
 import nox.platform.PlatformInfoHolder;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -31,7 +31,7 @@ public class Platform implements Plugin<Project> {
 		}
 
 		ExtensionContainerInternal ext = project.getExtensions();
-		ext.create(PlatformExt.name, PlatformExt.class, project, rootExt.findByType(PlatformInfoHolder.class));
+		ext.create(OSGiExt.name, OSGiExt.class, project, rootExt.findByType(PlatformInfoHolder.class));
 
 		ExtraPropertiesExtension extProps = ext.getExtraProperties();
 		// apply to every sub-project

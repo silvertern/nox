@@ -11,7 +11,7 @@ version = "1.2.3"
 
 repositories {
 	jcenter()
-	add(platform.repo("e46", new File(rootProject.projectDir, "platform")))
+	add(osgi.repo("e46", new File(rootProject.projectDir, "platform")))
 }
 
 
@@ -21,5 +21,5 @@ jar.manifest {
 }
 
 dependencies {
-	compile platform.bundle("somejar", "0.11.0")
+	compile osgi.bundle("somejar", "0.11.0")
 }

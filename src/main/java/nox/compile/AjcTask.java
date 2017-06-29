@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-public class Ajc extends DefaultTask {
+public class AjcTask extends DefaultTask {
 
-	private static final Logger logger = LoggerFactory.getLogger(Ajc.class);
+	private static final Logger logger = LoggerFactory.getLogger(AjcTask.class);
 
 	public SourceSet sourceSet;
 
@@ -33,7 +33,7 @@ public class Ajc extends DefaultTask {
 
 	public Map<String, String> additionalAjcArgs = Maps.newHashMap();
 
-	public Ajc() {
+	public AjcTask() {
 		getLogging().captureStandardOutput(LogLevel.INFO);
 	}
 

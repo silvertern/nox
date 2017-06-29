@@ -1,7 +1,7 @@
 /*
  * Copyright (c) Oleg Sklyar 2017. License: MIT 
  */
-package nox.compile.osgi;
+package nox.compile;
 
 import com.google.common.base.Preconditions;
 import groovy.lang.Closure;

@@ -3,7 +3,7 @@
  */
 package nox;
 
-import nox.compile.Ajc;
+import nox.compile.AjcTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -52,7 +52,7 @@ public class AspectJ implements Plugin<Project> {
 				String aspectTaskName = namingConventions.getAspectCompileTaskName(projectSourceSet);
 				Task javaTask = tasks.getByName(namingConventions.getJavaCompileTaskName(projectSourceSet));
 
-				Ajc ajc = tasks.create(aspectTaskName, Ajc.class);
+				AjcTask ajc = tasks.create(aspectTaskName, AjcTask.class);
 				// aspectTaskArgs.put("overwrite", true);
 				ajc.setDescription("Compiles AspectJ Source for " + projectSourceSet.getName() + " source set");
 				ajc.sourceSet = projectSourceSet;
