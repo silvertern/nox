@@ -3,23 +3,6 @@
  */
 package nox.manifest;
 
-import aQute.bnd.osgi.Analyzer;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
-import com.google.common.collect.Sets;
-import groovy.lang.Closure;
-import nox.core.Version;
-import org.apache.commons.lang3.StringUtils;
-import org.gradle.api.GradleException;
-import org.gradle.api.Project;
-import org.gradle.api.java.archives.internal.DefaultManifest;
-import org.gradle.internal.file.PathToFileResolver;
-import org.gradle.util.ConfigureUtil;
-import org.gradle.util.WrapUtil;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,6 +14,25 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.jar.Manifest;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.Sets;
+
+import org.apache.commons.lang3.StringUtils;
+import org.gradle.api.GradleException;
+import org.gradle.api.Project;
+import org.gradle.api.java.archives.internal.DefaultManifest;
+import org.gradle.internal.file.PathToFileResolver;
+import org.gradle.util.ConfigureUtil;
+import org.gradle.util.WrapUtil;
+
+import aQute.bnd.osgi.Analyzer;
+import groovy.lang.Closure;
+import nox.core.Version;
 
 
 /**
@@ -110,12 +112,11 @@ public class OsgiManifest extends DefaultManifest {
 
 		Multimap<String, String> instructions = MultimapBuilder.hashKeys().linkedHashSetValues().build();
 		instructions.putAll(spec.instructions());
-
 		instructions.put(Analyzer.IMPORT_PACKAGE, "*");
 		instructions.put(Analyzer.EXPORT_PACKAGE, "*;-noimport:=true;version=" + spec.version.toString(Version.Component.Build));
 
-		for (String instruction: spec.instructions().keySet()) {
-			List<String> values = Lists.newArrayList(spec.instructions().get(instruction));
+		for (String instruction: instructions.keySet()) {
+			List<String> values = Lists.newArrayList(instructions.get(instruction));
 			String value = StringUtils.join(values, ",");
 			analyzer.getProperties().setProperty(instruction, value);
 		}

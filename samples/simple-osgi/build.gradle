@@ -28,9 +28,9 @@ jar.manifest {
 	assert spec.singleton
 
 	spec project, {
-		uses = false
+		uses = true
+		singleton = true
 	}
-	assert !spec.uses
 }
 
 dependencies {
