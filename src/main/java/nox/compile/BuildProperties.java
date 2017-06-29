@@ -7,7 +7,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import nox.core.BuildAPI;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
@@ -32,23 +31,23 @@ public class BuildProperties extends DefaultTask {
 
 	public static final String name = BuildProperties.class.getSimpleName().toLowerCase();
 
-	@BuildAPI	public final List<String> sources = Lists.newArrayList();
+	public final List<String> sources = Lists.newArrayList();
 
-	@BuildAPI	public final List<String> outputs = Lists.newArrayList();
+	public final List<String> outputs = Lists.newArrayList();
 
-	@BuildAPI	public final Set<String> binincludes = Sets.newLinkedHashSet();
+	public final Set<String> binincludes = Sets.newLinkedHashSet();
 
-	@BuildAPI	public final Map<String, String> instructions = Maps.newLinkedHashMap();
+	public final Map<String, String> instructions = Maps.newLinkedHashMap();
 
-	@BuildAPI	public void sources(String... sources) {
+	public void sources(String... sources) {
 		this.sources.addAll(Arrays.asList(sources));
 	}
 
-	@BuildAPI	public void binincludes(String... binincludes) {
+	public void binincludes(String... binincludes) {
 		this.binincludes.addAll(Arrays.asList(binincludes));
 	}
 
-	@BuildAPI	public void outputs(String... outputs) {
+	public void outputs(String... outputs) {
 		this.outputs.addAll(Arrays.asList(outputs));
 	}
 
@@ -111,7 +110,6 @@ public class BuildProperties extends DefaultTask {
 		return src;
 	}
 
-	@BuildAPI
 	public void clean() {
 		new File(getProject().getProjectDir(), "build.properties").delete();
 	}

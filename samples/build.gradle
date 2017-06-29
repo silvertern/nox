@@ -5,11 +5,3 @@ buildscript {
 }
 
 plugins.apply(nox.Platform)
-
-allprojects { p ->
-	p.repositories.add(platformRepo("e46", "./platform"))
-}
-
-bundleMappings {
-
-}

@@ -3,16 +3,14 @@
  */
 package nox.compile.osgi;
 
-import java.util.Arrays;
-import javax.annotation.Nonnull;
-
+import aQute.bnd.osgi.Analyzer;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
-
-import aQute.bnd.osgi.Analyzer;
-import nox.core.BuildAPI;
 import nox.core.Version;
 import nox.core.manifest.Spec;
+
+import javax.annotation.Nonnull;
+import java.util.Arrays;
 
 
 /**
@@ -22,13 +20,13 @@ import nox.core.manifest.Spec;
  */
 public class ManifestSpec implements Spec {
 
-	@BuildAPI @Nonnull public final String symbolicName;
+	@Nonnull public final String symbolicName;
 
-	@BuildAPI @Nonnull public final Version version;
+	@Nonnull public final Version version;
 
-	@BuildAPI public boolean singleton = false;
+	public boolean singleton = false;
 
-	@BuildAPI public boolean uses = true;
+	public boolean uses = true;
 
 	private final Multimap<String, String> instructions = MultimapBuilder.hashKeys()
 		.linkedHashSetValues()
@@ -51,28 +49,28 @@ public class ManifestSpec implements Spec {
 		return instructions;
 	}
 
-	@BuildAPI public ManifestSpec instruction(@Nonnull String instruction, @Nonnull String... values) {
+	public ManifestSpec instruction(@Nonnull String instruction, @Nonnull String... values) {
 		this.instructions.putAll(instruction, Arrays.asList(values));
 		return this;
 	}
 
-	@BuildAPI public ManifestSpec exports(@Nonnull String... packs) {
+	public ManifestSpec exports(@Nonnull String... packs) {
 		return instruction(Analyzer.EXPORT_PACKAGE, packs);
 	}
 
-	@BuildAPI public ManifestSpec privates(@Nonnull String... packs) {
+	public ManifestSpec privates(@Nonnull String... packs) {
 		String[] privates = Arrays.stream(packs).map(it -> "!" + it).toArray(String[]::new);
 		return instruction(Analyzer.EXPORT_PACKAGE, privates);
 	}
 
-	@BuildAPI public ManifestSpec optionals(@Nonnull String... packs) {
+	public ManifestSpec optionals(@Nonnull String... packs) {
 		String[] optionals = Arrays.stream(packs)
 			.map(it -> it + ";resolution:=optional")
 			.toArray(String[]::new);
 		return instruction(Analyzer.IMPORT_PACKAGE, optionals);
 	}
 
-	@BuildAPI public ManifestSpec imports(@Nonnull String... packs) {
+	public ManifestSpec imports(@Nonnull String... packs) {
 		return instruction(Analyzer.IMPORT_PACKAGE, packs);
 	}
 }
