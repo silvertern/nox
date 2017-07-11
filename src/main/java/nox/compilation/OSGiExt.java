@@ -3,13 +3,18 @@
  */
 package nox.compilation;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import groovy.lang.Closure;
-import nox.Platform;
-import nox.core.PlatformInfoHolder;
+
 import org.gradle.api.artifacts.ClientModule;
 import org.gradle.api.artifacts.repositories.ArtifactRepository;
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository;
@@ -19,14 +24,14 @@ import org.gradle.api.internal.artifacts.repositories.layout.DefaultIvyPatternRe
 import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.util.ConfigureUtil;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import groovy.lang.Closure;
+import nox.core.PlatformInfoHolder;
 
 public class OSGiExt {
+
+	public static final String PLUGINS = "plugins";
+
+	public static final String IVY_METADATA = "ivy-metadata";
 
 	public static final String name = "osgi";
 
@@ -42,7 +47,7 @@ public class OSGiExt {
 
 		public final List<String> outputs = Lists.newArrayList();
 
-		public final Set<String> binincludes = Sets.newLinkedHashSet(Arrays.asList("META-INF/"));
+		public final Set<String> binincludes = Sets.newLinkedHashSet(Arrays.asList("META-INF/", "."));
 
 		public final Map<String, String> instructions = Maps.newLinkedHashMap();
 
@@ -98,15 +103,15 @@ public class OSGiExt {
 		repo.layout("pattern", layout -> {
 			DefaultIvyPatternRepositoryLayout ivyLayout = (DefaultIvyPatternRepositoryLayout) layout;
 			ivyLayout.artifact(
-				String.format("%s/[module](.[classifier])_[revision].[ext]", Platform.PLUGINS));
+				String.format("%s/[module](.[classifier])_[revision].[ext]", PLUGINS));
 			ivyLayout.artifact(
-				String.format("%s/[module](.[classifier])_[revision]", Platform.PLUGINS));
+				String.format("%s/[module](.[classifier])_[revision]", PLUGINS));
 			ivyLayout.artifact(
-				String.format("%s/[module](.[classifier])-[revision].[ext]", Platform.PLUGINS));
+				String.format("%s/[module](.[classifier])-[revision].[ext]", PLUGINS));
 			ivyLayout.artifact(
-				String.format("%s/[module](.[classifier])-[revision]", Platform.PLUGINS));
+				String.format("%s/[module](.[classifier])-[revision]", PLUGINS));
 			ivyLayout.ivy(
-				String.format("%s/[module](.[classifier])_[revision].[ext]", Platform.IVY_METADATA));
+				String.format("%s/[module](.[classifier])_[revision].[ext]", IVY_METADATA));
 		});
 		return repo;
 	}

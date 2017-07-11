@@ -3,23 +3,20 @@
  */
 package nox;
 
-import nox.sys.Arch;
-import nox.sys.OS;
-import nox.sys.Win;
-import nox.compilation.OSGiExt;
-import nox.core.PlatformInfoHolder;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.internal.plugins.ExtensionContainerInternal;
 import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 
+import nox.compilation.OSGiExt;
+import nox.core.PlatformInfoHolder;
+import nox.sys.Arch;
+import nox.sys.OS;
+import nox.sys.Win;
+
 
 public class Platform implements Plugin<Project> {
-
-	public static final String PLUGINS = "plugins";
-
-	public static final String IVY_METADATA = "ivy-metadata";
 
 	@Override
 	public void apply(Project target) {
