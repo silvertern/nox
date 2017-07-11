@@ -2,7 +2,7 @@ apply plugin: "idea"
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'maven'
 
-version = "0.11.0"
+version = "0.11.1"
 group = "com.silvertern.gradle"
 
 jar.manifest.attributes (
