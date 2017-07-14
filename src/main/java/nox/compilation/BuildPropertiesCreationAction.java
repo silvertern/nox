@@ -3,17 +3,6 @@
  */
 package nox.compilation;
 
-import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.gradle.api.GradleException;
-import org.gradle.api.Project;
-import org.gradle.api.file.SourceDirectorySet;
-import org.gradle.api.internal.plugins.ExtensionContainerInternal;
-import org.gradle.api.internal.project.ProjectInternal;
-import org.gradle.api.internal.tasks.TaskContainerInternal;
-import org.gradle.api.plugins.JavaPluginConvention;
-import org.gradle.api.tasks.SourceSetContainer;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -24,6 +13,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import com.google.common.collect.Lists;
+
+import org.apache.commons.lang3.StringUtils;
+import org.gradle.api.GradleException;
+import org.gradle.api.Project;
+import org.gradle.api.file.SourceDirectorySet;
+import org.gradle.api.internal.plugins.ExtensionContainerInternal;
+import org.gradle.api.internal.project.ProjectInternal;
+import org.gradle.api.internal.tasks.TaskContainerInternal;
+import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.tasks.SourceSetContainer;
 
 
 public class BuildPropertiesCreationAction {
@@ -85,7 +86,7 @@ public class BuildPropertiesCreationAction {
 		return sourceEntries.stream()
 			.filter(se -> se.exists())
 			.map(se -> {
-				String element = se.getAbsolutePath().replace(projectDir.getAbsolutePath() + "/", "");
+				String element = se.getAbsolutePath().replace(projectDir.getAbsolutePath() + "/", "").replace(projectDir.getAbsolutePath() + "\\", "");
 				return element + (!element.endsWith("/") ? "/" : "");
 			})
 			.collect(Collectors.toList());
