@@ -1,7 +1,6 @@
 buildscript {
 	repositories.jcenter()
-	repositories.maven { url "https://dl.bintray.com/kotlin/kotlin-dev/" }
-	dependencies.add("classpath", "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2-M2")
+	dependencies.add("classpath", "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.3")
 }
 
 plugins.apply(IdeaPlugin)
@@ -35,7 +34,6 @@ gradlePlugin {
 }
 
 repositories.jcenter()
-repositories.maven { url "https://dl.bintray.com/kotlin/kotlin-dev/" }
 
 dependencies {
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jre8")
@@ -71,8 +69,4 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
 	archives sourcesJar
 	archives javadocJar
-}
-
-task wrapper(type: Wrapper) {
-	gradleVersion = "3.2.1"
 }
