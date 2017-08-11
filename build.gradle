@@ -1,13 +1,20 @@
-apply plugin: "idea"
-apply plugin: 'java-gradle-plugin'
-apply plugin: 'maven'
+buildscript {
+	repositories.jcenter()
+	repositories.maven { url "https://dl.bintray.com/kotlin/kotlin-dev/" }
+	dependencies.add("classpath", "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2-M2")
+}
 
-version = "0.11.2"
+plugins.apply(IdeaPlugin)
+plugins.apply(MavenPlugin)
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'kotlin'
+
+version = "0.12.0-SNAPSHOT"
 group = "com.silvertern.gradle"
 
 jar.manifest.attributes (
 	"Implementation-Version": version,
-  "Implementation-Title": "Equinox Platform and Build Plugin",
+	"Implementation-Title": "Equinox Platform and Build Plugin",
 )
 
 gradlePlugin {
@@ -27,12 +34,11 @@ gradlePlugin {
 	}
 }
 
-repositories {
-	mavenLocal()
-	jcenter()
-}
+repositories.jcenter()
+repositories.maven { url "https://dl.bintray.com/kotlin/kotlin-dev/" }
 
 dependencies {
+	compile("org.jetbrains.kotlin:kotlin-stdlib-jre8")
 	compile("biz.aQute.bnd:biz.aQute.bndlib:3.2.0")
 
 	compile "com.google.guava:guava:21.0"
