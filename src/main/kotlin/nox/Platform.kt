@@ -5,6 +5,7 @@ package nox
 
 import nox.compilation.OSGiExt
 import nox.core.PlatformInfoHolder
+import nox.platform.IvynizeTask
 import nox.sys.Arch
 import nox.sys.OS
 import nox.sys.Win
@@ -18,13 +19,15 @@ class Platform : Plugin<Project> {
 	override fun apply(target: Project) {
 		val project = target as ProjectInternal
 
+		project.tasks.create(IvynizeTask.registrationName, IvynizeTask::class.java)
+
 		val rootExt = project.rootProject.extensions
 		if (rootExt.findByType(PlatformInfoHolder::class.java) == null) {
 			rootExt.create(PlatformInfoHolder.name, PlatformInfoHolder::class.java)
 		}
 
 		val ext = project.extensions
-		ext.create(OSGiExt.name, OSGiExt::class.java, project, rootExt.findByType(PlatformInfoHolder::class.java))
+		ext.create(OSGiExt.registrationName, OSGiExt::class.java, project, rootExt.findByType(PlatformInfoHolder::class.java))
 
 		val extProps = ext.extraProperties
 		// apply to every sub-project

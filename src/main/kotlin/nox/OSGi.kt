@@ -39,7 +39,7 @@ class OSGi : Plugin<Project> {
 		jarTask.manifest = manifest
 
 		val infoHolder = project.rootProject.extensions.findByType(PlatformInfoHolder::class.java)
-		ext.create(OSGiExt.name, OSGiExt::class.java, project, infoHolder)
+		ext.create(OSGiExt.registrationName, OSGiExt::class.java, project, infoHolder)
 
 		project.afterEvaluate { ManifestUnpackingAction(it) }
 		project.afterEvaluate { BuildPropertiesCreationAction(it) }

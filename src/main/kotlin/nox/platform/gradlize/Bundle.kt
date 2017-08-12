@@ -40,4 +40,8 @@ class Bundle private constructor(name: String, version: Version, val exportedPac
 	fun rename(newName: String): Bundle {
 		return Bundle(newName, version, exportedPackages, importedPackages, requiredBundles)
 	}
+
+	override fun toString(): String {
+		return "%s-%s".format(name, version)
+	}
 }

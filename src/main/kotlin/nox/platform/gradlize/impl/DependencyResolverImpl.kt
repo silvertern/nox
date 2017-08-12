@@ -11,34 +11,65 @@ import nox.platform.gradlize.Dependency
 import nox.platform.gradlize.DependencyResolver
 import nox.platform.gradlize.Requirement
 import org.slf4j.LoggerFactory
-import java.util.SortedSet
-import java.util.TreeSet
+import java.util.*
 
 
 internal class DependencyResolverImpl(private val universe: BundleUniverse) : DependencyResolver {
 
+	private enum class Status {
+		Ok,
+		Ignored,
+		VersionMismatch,
+		Missing
+	}
+
 	override fun resolveFor(bundle: Bundle): Collection<Dependency> {
 		val depRange = mutableMapOf<String, SortedSet<Version>>()
 		for (req in bundle.requiredBundles) {
-			if (!req.optional && bundle.name != req.name) {
+			if (!req.optional && bundle.name != req.name && !req.name.startsWith("system.bundle") && !req.name.startsWith("org.eclipse")) {
 				val allBundleVersions = universe.bundleVersions(req.name)
 				val okBundleVersions = allBundleVersions.subSet(req.from, req.to)
 				if (okBundleVersions.isNotEmpty()) {
 					depRange.put(req.name, TreeSet(okBundleVersions))
 				} else if (allBundleVersions.isNotEmpty()) {
-					logger.info(":bundle -> {} => version mismatch for bundle {}", bundle, req.name)
+					logger.warn(":bundle -> {} has bundle version mismatch\n\tusing {} for {}", bundle, allBundleVersions, req)
 					depRange.put(req.name, allBundleVersions)
 				} else {
-					logger.error(":bundle -> {} => missing required bundle {}", bundle, req.name)
+					logger.error(":bundle -> {} is missing required bundle\n\t{}", bundle, req.name)
 				}
 			}
 		}
 
+		var missing : SortedSet<String> = TreeSet()
+		val misversioned = mutableListOf<String>()
+
 		for (pkgReq in bundle.importedPackages) {
 			val dep = resolveForPackage(bundle, pkgReq)
-			if (dep != null) {
-				depRange.put(dep.first, dep.second) // possibly overwrite with more stringent
+			if (dep.first == Status.Ok || dep.first == Status.VersionMismatch) {
+				depRange.put(dep.second, dep.third) // possibly overwrite with more stringent
 			}
+			when (dep.first) {
+				Status.Missing -> missing.add(pkgReq.name)
+				Status.VersionMismatch -> misversioned.add("using %s for %s".format(dep.third, pkgReq))
+			}
+		}
+
+		missing = missing.filter {
+			var res = true
+			for (m in missing) {
+				if (it != m && it.startsWith(m)) {
+					res = false
+					break
+				}
+			}
+			res
+		}.toSortedSet()
+
+		if (missing.isNotEmpty()) {
+			logger.error(":bundle -> {} is missing required packages\n\t{}", bundle, missing.joinToString("\n\t"))
+		}
+		if (misversioned.isNotEmpty()) {
+			logger.warn(":bundle -> {} has package version mismatch\n\t{}", bundle, misversioned.joinToString("\n\t"))
 		}
 
 		val res = mutableListOf<Dependency>()
@@ -54,21 +85,22 @@ internal class DependencyResolverImpl(private val universe: BundleUniverse) : De
 	// - will prefer current matching over new
 	// - may restrict the version range of current
 	// - if no exact matching found may return mismatching version range for implementing bundle (will keep current)
-	private fun resolveForPackage(bundle: Bundle, pkgReq: Requirement): Pair<String, SortedSet<Version>>? {
-		if (pkgReq.optional || pkgReq.name.startsWith("org.eclipse") || pkgReq.name.startsWith(
-			"org.osgi") || pkgReq.name.startsWith("javax.") || pkgReq.name.startsWith("org.w3c.dom")) {
-			return null
+	private fun resolveForPackage(bundle: Bundle, pkgReq: Requirement): Triple<Status, String, SortedSet<Version>> {
+		if (pkgReq.optional ||
+			pkgReq.name.startsWith("org.eclipse") ||
+			pkgReq.name.startsWith("javax") ||
+			// pkgReq.name.startsWith("org.osgi") ||
+			pkgReq.name.startsWith("org.w3c.dom")) {
+			return Triple(Status.Ignored, "", TreeSet())
 		}
-		for (expPack in bundle.exportedPackages) {
-			if (pkgReq.name == expPack.name) {
-				return null
-			}
-		}
+		bundle.exportedPackages
+			.filter { pkgReq.name == it.name }
+			.forEach { return Triple(Status.Ignored, "", TreeSet()) }
+
 		val allPkgVersions = universe.packageVersionsWithExportingBundles(pkgReq.name)
 			.filterValues { implBundle -> implBundle.name != bundle.name }.toSortedMap()
 		if (allPkgVersions.isEmpty()) {
-			logger.error(":bundle -> {} => missing required package {}", bundle, pkgReq.name)
-			return null
+			return Triple(Status.Missing, "", TreeSet())
 		}
 
 		var pkgVersions = allPkgVersions.subMap(pkgReq.from, pkgReq.to)
@@ -85,11 +117,7 @@ internal class DependencyResolverImpl(private val universe: BundleUniverse) : De
 			.filter { it.name == bundleName }
 			.map { it.version }
 			.toSortedSet()
-		val res = Pair(bundleName, bundleVersions)
-		if (imperfectMatch) {
-			logger.info(":bundle -> {} => version mismatch for package {}: {}", bundle, pkgReq, res)
-		}
-		return res
+		return Triple(if (imperfectMatch) Status.VersionMismatch else Status.Ok, bundleName, bundleVersions)
 	}
 
 	companion object {

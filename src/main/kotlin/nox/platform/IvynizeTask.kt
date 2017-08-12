@@ -13,46 +13,50 @@ import nox.platform.gradlize.MetadataExporter
 import nox.platform.gradlize.UniverseAnalyzer
 import org.apache.commons.io.FileUtils
 import org.gradle.api.DefaultTask
-import org.gradle.api.GradleException
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import java.io.File
 import java.io.IOException
-import java.util.jar.JarFile
-import java.util.jar.Manifest
 
 
 open class IvynizeTask : DefaultTask() {
 
-	@InputDirectory
-	val pluginsDir: File
+	companion object {
 
-	@OutputDirectory
+		val registrationName = "ivynize"
+	}
+
+	@Internal
+	var targetPlatform : File? = null
+
 	val ivyDir: File
+		@OutputDirectory
+		get() = File(targetPlatform, OSGiExt.ivyDir)
+
+	val pluginsDir: File
+		@InputDirectory
+		get() = File(targetPlatform, OSGiExt.pluginsDir)
 
 	init {
 		group = "nox.Platform"
-		description = "Resolves target platform bundle dependencies into an Ivy repo, " + "the repo is auto-added with nox.Java [implies bundle, create]."
-
-		val ext = project.extensions.extraProperties
-		if (!ext.has(targetPlatformRoot)) {
-			throw GradleException("targetPlatformRoot undefined")
-		}
-
-		val targetPlatformFile = ext.get(targetPlatformRoot) as File
-		pluginsDir = File(targetPlatformFile, OSGiExt.PLUGINS)
-		ivyDir = File(targetPlatformFile, OSGiExt.IVY_METADATA)
+		description = "Resolves target platform bundle dependencies into an Ivy repository under {targetPlatform}/" + OSGiExt.ivyDir
 	}
 
 	@TaskAction
 	fun action(inputs: IncrementalTaskInputs) {
 		if (!inputs.isIncremental) {
 			action()
-			return
+		} else {
+			var counter = 0
+			inputs.outOfDate { _ -> counter++ }
+			inputs.removed { _ -> counter++ }
+			if (counter > 0) {
+				action()
+			}
 		}
-		inputs.outOfDate { details -> action() }
 	}
 
 	private fun action() {
@@ -67,38 +71,30 @@ open class IvynizeTask : DefaultTask() {
 				val remappedBundle = bundle.rename(bundleFilePrefix)
 				val remappedDeps = deps.map { Dependency(evalFilePrefix(nameMap, it), it.version) }
 
-				MetadataExporter.instance(remappedBundle, groupName, remappedDeps).exportTo(ivyDir)
+				MetadataExporter.instance(remappedBundle, OSGiExt.group, remappedDeps).exportTo(ivyDir)
 			}).analyze(BundleUniverse.instance(Duplicates.Overwrite))
 		} catch (ex: IOException) {
 			throw IllegalStateException(ex)
 		}
-
 	}
 
 	@Throws(IOException::class)
 	private fun remapSymbolicNamesToFilePrefixes(): Map<String, Map<String, String>> {
 		val res = mutableMapOf<String, MutableMap<String, String>>()
-		val files = pluginsDir.listFiles { file -> !file.name.contains(".source_") }
-		checkNotNull(files) { "No permissions to list target plugins directory" }
-		for (file in files!!) {
-			var manifest: Manifest? = null
-			if (file.isDirectory) {
-				FileUtils.openInputStream(File(file, "META-INF/MANIFEST.MF")).use { s -> manifest = Manifest(s) }
-			} else {
-				manifest = JarFile(file).manifest
-			}
-			val bundle = Bundle.parse(manifest!!)
+		UniverseAnalyzer.listBundles(pluginsDir).forEach { file ->
+			val bundle = Bundle.parse(UniverseAnalyzer.loadManifest(file))
 
 			val symbolicName = bundle.name
+			if (!res.containsKey(symbolicName)) {
+				res.put(symbolicName, mutableMapOf())
+			}
+
 			val version = bundle.version.toString()
 			var filePrefix = file.name.split(version.toRegex())[0]
 			if (filePrefix.endsWith("_") || filePrefix.endsWith("-")) {
 				filePrefix = filePrefix.substring(0, filePrefix.length - 1)
 			}
 
-			if (!res.containsKey(symbolicName)) {
-				res.put(symbolicName, mutableMapOf<String, String>())
-			}
 			res[symbolicName]!![version] = filePrefix
 		}
 		return res
@@ -114,12 +110,4 @@ open class IvynizeTask : DefaultTask() {
 		}
 		return versioned.name
 	}
-
-	companion object {
-
-		val targetPlatformRoot = "targetPlatformRoot"
-
-		val groupName = "eclipse"
-	}
-
 }

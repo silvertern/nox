@@ -56,34 +56,30 @@ open class OSGiExt(project: ProjectInternal, private val holder: PlatformInfoHol
 		return this
 	}
 
-	fun bundle(symbolicName: String, version: String): ClientModule {
+	@JvmOverloads
+	fun bundle(symbolicName: String, version: String = "+"): ClientModule {
 		return DefaultClientModule(group, holder.bundleMappings.getOrDefault(symbolicName, symbolicName), version)
 	}
 
-	fun repo(name: String, file: Any): ArtifactRepository {
-		val root: File
-		if (file is File) {
-			root = file
-		} else if (file is Path) {
-			root = file.toFile()
-		} else {
-			root = File(file.toString())
+	fun repo(name: String, repoRoot: Any): ArtifactRepository {
+		val root = when (repoRoot) {
+			is File -> repoRoot
+			is Path -> repoRoot.toFile()
+			else -> File(repoRoot.toString())
 		}
 		val repo = repoFactory.createIvyRepository()
 		repo.name = name
 		repo.setUrl(root)
 		repo.layout("pattern") { layout ->
 			val ivyLayout = layout as DefaultIvyPatternRepositoryLayout
-			ivyLayout.artifact(
-				"%s/[module](.[classifier])_[revision].[ext]".format(PLUGINS))
-			ivyLayout.artifact(
-				"%s/[module](.[classifier])_[revision]".format(PLUGINS))
-			ivyLayout.artifact(
-				"%s/[module](.[classifier])-[revision].[ext]".format(PLUGINS))
-			ivyLayout.artifact(
-				"%s/[module](.[classifier])-[revision]".format(PLUGINS))
-			ivyLayout.ivy(
-				"%s/[module](.[classifier])_[revision].[ext]".format(IVY_METADATA))
+			// eclipse jar format
+			ivyLayout.artifact("%s/[module](.[classifier])_[revision].[ext]".format(pluginsDir))
+			// eclipse dir format
+			ivyLayout.artifact("%s/[module](.[classifier])_[revision]".format(pluginsDir))
+			// maven format
+			ivyLayout.artifact("%s/[module]-[revision](-[classifier]).[ext]".format(pluginsDir))
+			// ivy metadata format
+			ivyLayout.ivy("%s/[module]-[revision](-[classifier]).[ext]".format(ivyDir))
 		}
 		return repo
 	}
@@ -94,12 +90,12 @@ open class OSGiExt(project: ProjectInternal, private val holder: PlatformInfoHol
 
 	companion object {
 
-		val PLUGINS = "plugins"
+		val registrationName = "osgi"
 
-		val IVY_METADATA = "ivy-metadata"
+		val pluginsDir = "plugins"
 
-		val name = "osgi"
+		val ivyDir = "ivy-metadata"
 
-		val group = "plugins"
+		val group = "plugins" // not really used for repo layout, can be anything
 	}
 }

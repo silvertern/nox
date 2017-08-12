@@ -3,8 +3,6 @@
  */
 package nox.platform.gradlize
 
-import com.google.common.base.Preconditions
-import com.google.common.collect.Lists
 import org.apache.commons.io.FileUtils
 import org.gradle.api.GradleException
 import java.io.File
@@ -32,24 +30,29 @@ internal class UniverseAnalyzer(private val pluginsDir: File, private val action
 		} catch (ex: IOException) {
 			throw GradleException("Failed to analyze dependency tree", ex)
 		}
-
 	}
 
-	@Throws(IOException::class)
-	private fun loadBundles(pluginsDir: File): Collection<Bundle> {
-		val files = pluginsDir.listFiles { file -> !file.name.contains(".source_") }
-		Preconditions.checkNotNull(files, "No permissions to list target plugins directory")
-		val bundles = Lists.newArrayList<Bundle>()
-		for (file in files!!) {
-			var manifest: Manifest? = null
-			if (file.isDirectory) {
-				FileUtils.openInputStream(File(file, "META-INF/MANIFEST.MF"))
-					.use { s -> manifest = Manifest(s) }
-			} else {
-				manifest = JarFile(file).manifest
+	companion object {
+
+		fun listBundles(pluginsDir: File): Collection<File> {
+			val files = pluginsDir.listFiles { file ->
+				!file.name.contains(".source_") && !file.name.contains("-sources")
 			}
-			bundles.add(Bundle.parse(manifest!!))
+			checkNotNull(files) { "No permissions to list target plugins directory" }
+			return files!!.toList()
 		}
-		return bundles
+
+		fun loadManifest(bundleFile: File): Manifest {
+			if (bundleFile.isDirectory) {
+				FileUtils.openInputStream(File(bundleFile, "META-INF/MANIFEST.MF"))
+					.use { s -> return Manifest(s) }
+			} else {
+				return JarFile(bundleFile).manifest
+			}
+		}
+
+		@Throws(IOException::class)
+		fun loadBundles(pluginsDir: File): Collection<Bundle> =
+			listBundles(pluginsDir).map { file -> Bundle.parse(loadManifest(file)) }
 	}
 }
