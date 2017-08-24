@@ -26,7 +26,7 @@ open class OSGiExt(project: ProjectInternal, private val holder: PlatformInfoHol
 
 		val outputs = mutableListOf<String>()
 
-		val binincludes = mutableSetOf("META-INF/")
+		val binincludes = mutableSetOf("META-INF/", ".")
 
 		val instructions: MutableMap<String, String> = LinkedHashMap()
 
