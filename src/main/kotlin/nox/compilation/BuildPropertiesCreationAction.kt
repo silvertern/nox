@@ -50,22 +50,23 @@ class BuildPropertiesCreationAction(target: Project) {
 
 	private val resourceExtractor = object : SourceExtractor {
 		override fun extract(sourceSets: SourceSetContainer): SourceDirectorySet {
-			return sourceSets.getByName("main").java
+			return sourceSets.getByName("main").resources
 		}
 	}
 	private fun create() {
 		val lines = mutableListOf<String>()
-		val javaSources = getSources(buildProps.sources, javaExtractor)
-		javaSources.addAll(getSources(listOf(), resourceExtractor))
-		if (!javaSources.isEmpty()) {
+		var javaSources = getSources(javaExtractor)
+		javaSources.addAll(buildProps.sources)
+		javaSources = javaSources.filter { File(projectDir, it).exists() }.toMutableList()
+		if (javaSources.isNotEmpty()) {
 			lines.add("source.. = " + javaSources.joinToString(","))
-		}
-		val bins = buildProps.binincludes.filter { "META-INF/" == it || File(projectDir, it).exists() }
-		if (!bins.isEmpty()) {
-			lines.add("bin.includes = " + bins.joinToString(","))
-		}
-		if (!javaSources.isEmpty()) {
 			lines.add("output.. = " + if (buildProps.outputs.isEmpty()) "bin/" else buildProps.outputs.joinToString(","))
+		}
+		var bins = getSources(resourceExtractor)
+		bins.addAll(buildProps.binincludes)
+		bins = bins.filter { it == "META-INF/" || it == "." || File(projectDir, it).exists() }.toMutableList()
+		if (bins.isNotEmpty()) {
+			lines.add("bin.includes = " + bins.joinToString(","))
 		}
 		for ((key, value) in buildProps.instructions) {
 			lines.add("$key=$value")
@@ -79,15 +80,14 @@ class BuildPropertiesCreationAction(target: Project) {
 
 	}
 
-	private fun getSources(preconfigured: List<String>, sourceExtractor: SourceExtractor): MutableList<String> {
-		if (!preconfigured.isEmpty()) {
-			return preconfigured.toMutableList()
-		}
+	private fun getSources(sourceExtractor: SourceExtractor): MutableList<String> {
 		val sourceEntries = sourceExtractor.extract(javaConv.sourceSets).srcDirs
 		return sourceEntries
 			.filter { it.exists() }
-			.map { val element = it.absolutePath.replace(projectDir.absolutePath + "/", "").replace(projectDir.absolutePath + "\\", "")
-				element + if (!element.endsWith("/")) "/" else ""
+			.map {
+				var element = it.absolutePath.replace(projectDir.absolutePath + "/", "").replace(projectDir.absolutePath + "\\", "")
+				element += if (!element.endsWith("/")) "/" else ""
+				element.replace("\\", "/")
 			}.toMutableList()
 	}
 
