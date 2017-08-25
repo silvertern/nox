@@ -85,9 +85,11 @@ class BuildPropertiesCreationAction(target: Project) {
 		return sourceEntries
 			.filter { it.exists() }
 			.map {
-				var element = it.absolutePath.replace(projectDir.absolutePath + "/", "").replace(projectDir.absolutePath + "\\", "")
-				element += if (!element.endsWith("/")) "/" else ""
-				element.replace("\\", "/")
+				var element = it.absolutePath
+					.replace(projectDir.absolutePath + "/", "")
+					.replace(projectDir.absolutePath + "\\", "")
+					.replace("\\", "/")
+				element + if (!element.endsWith("/")) "/" else ""
 			}.toMutableList()
 	}
 

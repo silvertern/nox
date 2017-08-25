@@ -8,7 +8,7 @@ plugins.apply(MavenPlugin)
 apply(plugin: "java-gradle-plugin")
 apply(plugin: "kotlin")
 
-version = "0.12.2"
+version = "0.12.3"
 group = "com.silvertern.gradle"
 
 jar.manifest.attributes (
