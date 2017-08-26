@@ -5,10 +5,8 @@ package nox.compilation
 
 import groovy.lang.Closure
 import nox.core.PlatformInfoHolder
-import org.gradle.api.artifacts.ClientModule
 import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.api.internal.artifacts.BaseRepositoryFactory
-import org.gradle.api.internal.artifacts.dependencies.DefaultClientModule
 import org.gradle.api.internal.artifacts.repositories.layout.DefaultIvyPatternRepositoryLayout
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.util.ConfigureUtil
@@ -57,8 +55,8 @@ open class OSGiExt(project: ProjectInternal, private val holder: PlatformInfoHol
 	}
 
 	@JvmOverloads
-	fun bundle(symbolicName: String, version: String = "+"): ClientModule {
-		return DefaultClientModule(group, holder.bundleMappings.getOrDefault(symbolicName, symbolicName), version)
+	fun bundle(symbolicName: String, version: String = "+"): String {
+		return "%s:%s:%s".format(group, holder.bundleMappings.getOrDefault(symbolicName, symbolicName), version)
 	}
 
 	fun repo(name: String, repoRoot: Any): ArtifactRepository {
