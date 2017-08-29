@@ -38,8 +38,13 @@ class OSGi : Plugin<Project> {
 			project.fileResolver)
 		jarTask.manifest = manifest
 
-		val infoHolder = project.rootProject.extensions.findByType(PlatformInfoHolder::class.java)
-		ext.create(OSGiExt.registrationName, OSGiExt::class.java, project, infoHolder)
+		val rootExt = project.rootProject.extensions
+		var infoHolder = rootExt.findByType(PlatformInfoHolder::class.java)
+		if (infoHolder == null) {
+			infoHolder = rootExt.create(PlatformInfoHolder.name, PlatformInfoHolder::class.java)
+		}
+
+		ext.create(OSGiExt.registrationName, OSGiExt::class.java, project, infoHolder!!)
 
 		project.afterEvaluate { ManifestUnpackingAction(it) }
 		project.afterEvaluate { BuildPropertiesCreationAction(it) }
