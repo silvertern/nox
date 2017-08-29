@@ -56,15 +56,14 @@ class BuildPropertiesCreationAction(target: Project) {
 	private fun create() {
 		val lines = mutableListOf<String>()
 		var javaSources = getSources(javaExtractor)
+		javaSources.addAll(getSources(resourceExtractor))
 		javaSources.addAll(buildProps.sources)
 		javaSources = javaSources.filter { File(projectDir, it).exists() }.toMutableList()
 		if (javaSources.isNotEmpty()) {
 			lines.add("source.. = " + javaSources.joinToString(","))
 			lines.add("output.. = " + if (buildProps.outputs.isEmpty()) "bin/" else buildProps.outputs.joinToString(","))
 		}
-		var bins = getSources(resourceExtractor)
-		bins.addAll(buildProps.binincludes)
-		bins = bins.filter { it == "META-INF/" || it == "." || File(projectDir, it).exists() }.toMutableList()
+		val bins  = buildProps.binincludes.filter { it == "META-INF/" || it == "." || File(projectDir, it).exists() }
 		if (bins.isNotEmpty()) {
 			lines.add("bin.includes = " + bins.joinToString(","))
 		}
