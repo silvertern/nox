@@ -7,7 +7,6 @@ import groovy.lang.Closure
 import nox.core.PlatformInfoHolder
 import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.api.internal.artifacts.BaseRepositoryFactory
-import org.gradle.api.internal.artifacts.repositories.layout.DefaultIvyPatternRepositoryLayout
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.util.ConfigureUtil
 import java.io.File
@@ -60,25 +59,23 @@ open class OSGiExt(project: ProjectInternal, private val holder: PlatformInfoHol
 	}
 
 	fun repo(name: String, repoRoot: Any): ArtifactRepository {
-		val root = when (repoRoot) {
-			is File -> repoRoot
-			is Path -> repoRoot.toFile()
-			else -> File(repoRoot.toString())
+		var root = when (repoRoot) {
+			is String -> repoRoot
+			is File -> repoRoot.absolutePath
+			is Path -> repoRoot.toFile().absolutePath
+			else -> repoRoot.toString()
 		}
+		root = root.replace("\\", "/")
 		val repo = repoFactory.createIvyRepository()
 		repo.name = name
-		repo.setUrl(root)
-		repo.layout("pattern") { layout ->
-			val ivyLayout = layout as DefaultIvyPatternRepositoryLayout
-			// eclipse jar format
-			ivyLayout.artifact("%s/[module](.[classifier])_[revision].[ext]".format(pluginsDir))
-			// eclipse dir format
-			ivyLayout.artifact("%s/[module](.[classifier])_[revision]".format(pluginsDir))
-			// maven format
-			ivyLayout.artifact("%s/[module]-[revision](-[classifier]).[ext]".format(pluginsDir))
-			// ivy metadata format
-			ivyLayout.ivy("%s/[module]-[revision](-[classifier]).[ext]".format(ivyDir))
-		}
+		// eclipse jar format
+		repo.artifactPattern("%s/%s/[module](.[classifier])_[revision].[ext]".format(root, pluginsDir))
+		// eclipse dir format
+		repo.artifactPattern("%s/%s/[module](.[classifier])_[revision]".format(root, pluginsDir))
+		// maven format
+		repo.artifactPattern("%s/%s/[module]-[revision](-[classifier]).[ext]".format(root, pluginsDir))
+		// ivy metadata format
+		repo.ivyPattern("%s/%s/[module]-[revision](-[classifier]).[ext]".format(root, ivyDir))
 		return repo
 	}
 
