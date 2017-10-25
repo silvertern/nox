@@ -32,7 +32,7 @@ class BuildPropertiesCreationAction(target: Project) {
 
 		projectDir = project.projectDir
 		javaConv = project.convention.getPlugin(JavaPluginConvention::class.java)
-		buildProps = ext.findByType(OSGiExt::class.java).buildProperties
+		buildProps = ext.findByType(OSGiExt::class.java)!!.buildProperties
 
 		tasks.getByName("jar").doFirst { _ -> create() }
 		tasks.getByName("clean").doFirst { _ -> clean() }

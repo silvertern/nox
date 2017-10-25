@@ -60,7 +60,7 @@ class OSGi : Plugin<Project> {
 		val project = target as ProjectInternal
 
 		val ext = project.extensions
-		val buildProps = ext.findByType(OSGiExt::class.java).buildProperties
+		val buildProps = ext.findByType(OSGiExt::class.java)!!.buildProperties
 
 		val tasks = project.tasks
 		val procRes = tasks.getByName("processResources") as ProcessResources

@@ -4,11 +4,9 @@
 package nox.compilation
 
 import nox.manifest.OsgiManifest
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.jvm.tasks.Jar
-import java.io.IOException
 import java.net.URI
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -28,7 +26,7 @@ class ManifestUnpackingAction {
 		val tasks = project.tasks
 		val ext = project.extensions
 
-		val platform = ext.findByType(OSGiExt::class.java)
+		val platform = ext.findByType(OSGiExt::class.java)!!
 		val jarTask = tasks.getByName("jar") as Jar
 
 		// extension value has precedency over ext; default=unpack
