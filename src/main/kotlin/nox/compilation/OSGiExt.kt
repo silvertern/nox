@@ -69,13 +69,13 @@ open class OSGiExt(project: ProjectInternal, private val holder: PlatformInfoHol
 		val repo = repoFactory.createIvyRepository()
 		repo.name = name
 		// eclipse jar format
-		repo.artifactPattern("%s/%s/[module](.[classifier])_[revision].[ext]".format(root, pluginsDir))
+		repo.artifactPattern("%s/[organisation]/[module](.[classifier])_[revision].[ext]".format(root))
 		// eclipse dir format
-		repo.artifactPattern("%s/%s/[module](.[classifier])_[revision]".format(root, pluginsDir))
+		repo.artifactPattern("%s/[organisation]/[module](.[classifier])_[revision]".format(root))
 		// maven format
-		repo.artifactPattern("%s/%s/[module]-[revision](-[classifier]).[ext]".format(root, pluginsDir))
+		repo.artifactPattern("%s/[organisation]/[module]-[revision](-[classifier]).[ext]".format(root))
 		// ivy metadata format
-		repo.ivyPattern("%s/%s/[module]-[revision](-[classifier]).[ext]".format(root, ivyDir))
+		repo.ivyPattern("%s/%s/[organisation]/[module]-[revision](-[classifier]).[ext]".format(root, ivyDir))
 		return repo
 	}
 
@@ -91,6 +91,6 @@ open class OSGiExt(project: ProjectInternal, private val holder: PlatformInfoHol
 
 		val ivyDir = "ivy-metadata"
 
-		val group = "plugins" // not really used for repo layout, can be anything
+		val group = pluginsDir
 	}
 }

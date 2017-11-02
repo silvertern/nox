@@ -24,8 +24,9 @@ internal class MetadataExporterIvyImpl(private val bundle: Bundle, private val o
 
 	@Throws(IOException::class)
 	override fun exportTo(targetDir: File) {
-		targetDir.mkdirs()
-		val file = File(targetDir, "%s-%s.xml".format(bundle.name, bundle.version))
+		val orgDir = File(targetDir, org)
+		orgDir.mkdirs()
+		val file = File(orgDir, "%s-%s.xml".format(bundle.name, bundle.version))
 		FileUtils.writeStringToFile(file, toString(), "UTF-8", false)
 	}
 
