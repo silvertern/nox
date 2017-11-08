@@ -17,6 +17,7 @@ import org.gradle.util.WrapUtil
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
+import java.nio.file.Path
 import java.util.*
 import java.util.function.Supplier
 import java.util.jar.Manifest
@@ -33,11 +34,23 @@ class OsgiManifest(private val classpathSupplier: Supplier<Set<File>>, private v
 
 	var from: File? = null
 
+	var fromVersion: Version? = null
+
 	fun spec(symbolicName: String, version: Any, vararg configs: Closure<*>) {
 		this.spec = ManifestSpec(symbolicName, Version(version.toString()))
 		for (config in configs) {
 			ConfigureUtil.configure<ManifestSpec>(config, this.spec)
 		}
+	}
+
+	fun spec(from: Path, version: Any) {
+		this.from = from.toFile()
+		this.fromVersion = Version(version.toString())
+	}
+
+	fun spec(from: File, version: Any) {
+		this.from = from
+		this.fromVersion = Version(version.toString())
 	}
 
 	fun spec(project: Project, vararg configs: Closure<*>) {
@@ -75,7 +88,13 @@ class OsgiManifest(private val classpathSupplier: Supplier<Set<File>>, private v
 	@Throws(IOException::class)
 	private fun generateManifest(): Manifest {
 		if (from != null) {
-			FileInputStream(from).use { s -> return Manifest(s) }
+			FileInputStream(from).use { s ->
+				val manifest = Manifest(s)
+				if (fromVersion != null) {
+					manifest.mainAttributes.putValue(Analyzer.BUNDLE_VERSION, fromVersion.toString())
+				}
+				return manifest
+			}
 		}
 		if (spec == null) {
 			throw GradleException("Please provide manifest 'spec' or 'from' file")
