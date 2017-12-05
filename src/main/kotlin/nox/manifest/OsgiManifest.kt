@@ -124,7 +124,7 @@ class OsgiManifest(private val classpathSupplier: Supplier<Set<File>>, private v
 		}
 
 		var jar: File? = jarSupplier.get()
-		if (jar == null) {
+		if (jar == null || !jar.exists()) {
 			jar = File.createTempFile("osgi", UUID.randomUUID().toString())
 			jar.delete()
 			jar.mkdir()
