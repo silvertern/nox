@@ -76,6 +76,6 @@ class OSGi : Plugin<Project> {
 
 		private val sourceSetName = "main"
 
-		private val configName = "runtime"
+		private val configName = "compile"
 	}
 }
