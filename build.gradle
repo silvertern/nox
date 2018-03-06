@@ -1,14 +1,21 @@
 buildscript {
+	ext.kotlin_version = '1.2.0'
 	repositories.jcenter()
-	dependencies.add("classpath", "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.4")
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+	}
 }
+apply plugin: 'kotlin'
 
 plugins.apply(IdeaPlugin)
 plugins.apply(MavenPlugin)
 apply(plugin: "java-gradle-plugin")
 apply(plugin: "kotlin")
 
-version = "0.15.0"
+version = "0.16.0"
 group = "com.silvertern.gradle"
 
 jar.manifest.attributes (
@@ -36,7 +43,7 @@ gradlePlugin {
 repositories.jcenter()
 
 dependencies {
-	compile("org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.4")
+	compile("org.jetbrains.kotlin:kotlin-stdlib-jre8:1.2.0")
 
 	compile("org.slf4j:slf4j-api:1.7.10")
 	compile("com.google.guava:guava:21.0")
@@ -50,6 +57,7 @@ dependencies {
 	testCompile("junit:junit:4.12")
 
 	runtime("org.codehaus.woodstox:woodstox-core-asl:4.4.1")
+	compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
 task("sourcesJar", type: Jar, dependsOn: classes) {
@@ -68,3 +76,16 @@ task("javadocJar", type: Jar, dependsOn: javadoc) {
 
 artifacts.add("archives", sourcesJar)
 artifacts.add("archives", javadocJar)
+repositories {
+	mavenCentral()
+}
+compileKotlin {
+	kotlinOptions {
+		jvmTarget = "1.8"
+	}
+}
+compileTestKotlin {
+	kotlinOptions {
+		jvmTarget = "1.8"
+	}
+}

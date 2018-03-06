@@ -8,11 +8,7 @@ import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.jvm.tasks.Jar
 import java.net.URI
-import java.nio.file.FileSystems
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
+import java.nio.file.*
 
 
 class ManifestUnpackingAction {
@@ -45,10 +41,10 @@ class ManifestUnpackingAction {
 			}
 		}
 
-		val buildTask = tasks.getByName("build")
+		val assembleTask = tasks.getByName("assemble")
 		val cleanTask = tasks.getByName("clean")
 
-		buildTask.doLast { _ -> unpack(jarTask) }
+		assembleTask.doLast { _ -> unpack(jarTask) }
 		cleanTask.doLast { _ -> clean() }
 	}
 
