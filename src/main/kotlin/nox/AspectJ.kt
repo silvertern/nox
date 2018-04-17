@@ -57,7 +57,7 @@ class AspectJ : Plugin<Project> {
 				ajc.aspectpath = confs.findByName(aspectPathConfName)
 				ajc.ajInpath = confs.findByName(aspectInpathConfName)
 
-				ajc.setDependsOn(javaTask.dependsOn)
+				ajc.setDependsOn(javaTask.taskDependencies.getDependencies(javaTask))
 				ajc.dependsOn(ajc.aspectpath)
 				ajc.dependsOn(ajc.ajInpath)
 				javaTask.deleteAllActions()
