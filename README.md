@@ -26,55 +26,21 @@ Now one can use all the provided plugins in any of the child projects as follows
  the corresponding Ivy repositories to build against
 * `plugins.apply(nox.OSGi)` to override the default `jar`-task manifest generation
 
-## Configuring the _target platform_
+## Configuring the _target platform_ repository
 
-Shared configuration elements for the _target platform_ are provided by the `platform` extension.
-This extension is static and a single configuration will apply to all sub- or superprojects within
-the same build.
+The `nox.Platform` plugin defines the `osgi` extension shared also by the `nox.OSGi`
+plugin, which provides configuration options for the Ivy repository wrapping the
+target platform and references to compilation dependencies from the target platform.
 
-If you generate the _target platform_ with the `nox.Platform` plugin everything you need to do is
-to specify the `root` of all your platform related files:
-
-```
-apply plugin: nox.Platform
-
-platform {
-  root = file("/home/user/platform-root")
-}
-```
-
-If the `root` is specified, the Eclipse SDK will be later downloaded into `$root/eclipse` on
-Linux and Windows or `$root/Eclipse.app` on OSX, and the _target platform_ will be generated 
-within `$root/platform`. The latter is then provided by the `targetPlatformDir` on the `platform`
-extension.
-
-If you just want to build against an existing _target platform_ just set the `targetPlatformDir`
-in the `platform` extension, the root will be neither used no validated:
+The following snippet demonstrates how to add a gradle Ivy repository for a target
+platform residing under the `targetPlatformRoot`:
 
 ```
-apply plugin: nox.Platform
+plugins.apply(nox.Platform)
 
-platform {
-  targetPlatformDir = file("/home/user/e46")
-}
+repositories.add(osgi.repo("e47", targetPlatformRoot))
 ```
 
-It makes sense to configure the actual location via a variable specified in the user specific 
-`gradle.properties` files. The plugins will check that the platform location or the root location
-is specified providing no defaults.
-
-Further to the `targetPlatformDir` it is also possible to configure the platform build directory. By
-default it is the build directory of the project where the plugin is applied. However, this directory
-is removed when a `clean` taks is run, e.g. for Java build artifacts. To separate this behaviour and
-to keep the incremental nature of the platform generation, one build bundles, write temporary 
-inputs and generate the P2 repository elsewhere:
-
-```
-platform {
-  targetPlatformDir = file("/home/user/e46")
-  platformBuildDir = file("/home/user/e46/build")
-}
-```
 
 ## Compiling against the _target platform_ 
 
