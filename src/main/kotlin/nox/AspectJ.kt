@@ -47,6 +47,7 @@ class AspectJ : Plugin<Project> {
 			if (!projectSourceSet.allJava.isEmpty) {
 				val aspectTaskName = namingConventions.getAspectCompileTaskName(projectSourceSet)
 				val javaTask = tasks.getByName(namingConventions.getJavaCompileTaskName(projectSourceSet))
+				val classesTask = tasks.getByName("classes")
 
 				val ajc = tasks.create(aspectTaskName, AjcTask::class.java)
 				// aspectTaskArgs.put("overwrite", true);
@@ -57,11 +58,12 @@ class AspectJ : Plugin<Project> {
 				ajc.aspectpath = confs.findByName(aspectPathConfName)
 				ajc.ajInpath = confs.findByName(aspectInpathConfName)
 
-				ajc.setDependsOn(javaTask.dependsOn)
+				ajc.dependsOn(javaTask.taskDependencies)
 				ajc.dependsOn(ajc.aspectpath)
 				ajc.dependsOn(ajc.ajInpath)
 				javaTask.deleteAllActions()
-				javaTask.dependsOn(ajc)
+				classesTask.dependsOn(ajc)
+				javaTask.mustRunAfter(ajc)
 			}
 		}
 	}
