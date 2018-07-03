@@ -4,6 +4,7 @@
 package nox.compilation
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.JavaVersion
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.plugins.JavaPluginConvention
@@ -52,8 +53,8 @@ open class AjcTask : DefaultTask() {
 		ajcArgs.put("classpath", sourceSet!!.compileClasspath.asPath)
 		ajcArgs.put("destDir", sourceSet!!.output.classesDirs.singleFile.absolutePath)
 		ajcArgs.put("s", sourceSet!!.output.classesDirs.singleFile.absolutePath)
-		ajcArgs.put("source", javaConv.sourceCompatibility)
-		ajcArgs.put("target", javaConv.targetCompatibility)
+		ajcArgs.put("source", toAspectJVersion(javaConv.sourceCompatibility))
+		ajcArgs.put("target", toAspectJVersion(javaConv.targetCompatibility))
 		ajcArgs.put("inpath", ajInpath!!.asPath)
 		ajcArgs.put("xlint", xlint)
 		ajcArgs.put("fork", "true")
@@ -67,6 +68,13 @@ open class AjcTask : DefaultTask() {
 		ajcArgs.putAll(additionalAjcArgs)
 
 		ant.invokeMethod("iajc", ajcArgs)
+	}
+
+	fun toAspectJVersion(version: JavaVersion): String {
+		if (version.majorVersion >= "10") {
+			return version.majorVersion
+		}
+		return version.toString()
 	}
 
 	companion object {
