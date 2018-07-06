@@ -49,12 +49,18 @@ open class AjcTask : DefaultTask() {
 
 		val javaConv = project.convention.plugins["java"] as JavaPluginConvention
 
+		val sourceVersion = toAspectJVersion(javaConv.sourceCompatibility)
+		val targetVersion = toAspectJVersion(javaConv.targetCompatibility)
+
+		logger.info("AspectJ source version: ${sourceVersion}")
+		logger.info("AspectJ target version: ${targetVersion}")
+
 		val ajcArgs = mutableMapOf<String, Any>()
 		ajcArgs.put("classpath", sourceSet!!.compileClasspath.asPath)
 		ajcArgs.put("destDir", sourceSet!!.output.classesDirs.singleFile.absolutePath)
 		ajcArgs.put("s", sourceSet!!.output.classesDirs.singleFile.absolutePath)
-		ajcArgs.put("source", toAspectJVersion(javaConv.sourceCompatibility))
-		ajcArgs.put("target", toAspectJVersion(javaConv.targetCompatibility))
+		ajcArgs.put("source", sourceVersion)
+		ajcArgs.put("target", targetVersion)
 		ajcArgs.put("inpath", ajInpath!!.asPath)
 		ajcArgs.put("xlint", xlint)
 		ajcArgs.put("fork", "true")
@@ -71,7 +77,7 @@ open class AjcTask : DefaultTask() {
 	}
 
 	fun toAspectJVersion(version: JavaVersion): String {
-		if (version.majorVersion >= "10") {
+		if (version.majorVersion.toInt() >= 10) {
 			return version.majorVersion
 		}
 		return version.toString()
