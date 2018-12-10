@@ -10,3 +10,4 @@ out/
 *.iml
 build.properties
 MANIFEST.MF
+/bin/
