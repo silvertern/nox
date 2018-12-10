@@ -61,7 +61,7 @@ class AspectJ : Plugin<Project> {
 				ajc.dependsOn(javaTask.taskDependencies)
 				ajc.dependsOn(ajc.aspectpath)
 				ajc.dependsOn(ajc.ajInpath)
-				javaTask.deleteAllActions()
+				javaTask.setActions(emptyList())
 				classesTask.dependsOn(ajc)
 				javaTask.mustRunAfter(ajc)
 			}
